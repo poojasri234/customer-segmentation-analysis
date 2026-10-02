@@ -1,0 +1,41 @@
+{
+  "project": "Customer Value & Repeat Buying Analysis",
+  "source": {
+    "name": "UCI Online Retail",
+    "url": "https://doi.org/10.24432/C5BW33",
+    "license": "CC BY 4.0",
+    "scope": "Public historical transactions from a UK-based online retailer, December 2010 to December 2011.",
+    "currency": "GBP"
+  },
+  "method": {
+    "deduplication": "Retain the first exact full-row occurrence.",
+    "eligible_sales_rule": "Quantity > 0, UnitPrice > 0, and InvoiceNo does not begin with C.",
+    "customer_scope": "Only eligible lines with a CustomerID are included in customer profiling.",
+    "rfm_style_features": {
+      "recency": "Days from last purchase to the day after the final dataset transaction.",
+      "frequency": "Distinct eligible invoices per known customer.",
+      "monetary": "Eligible gross invoiced sales per known customer (Quantity \u00d7 UnitPrice)."
+    }
+  },
+  "results": {
+    "known_customers": 4338,
+    "repeat_buying": {
+      "definition": "At least two distinct eligible invoices in the observed period.",
+      "share_percent": 65.6
+    },
+    "top_customer_value_concentration": {
+      "definition": "Top 20% of known customers ranked by observed gross invoiced sales.",
+      "customer_count": 868,
+      "share_of_known_customer_gross_invoiced_sales_percent": 74.7
+    },
+    "known_customer_id_coverage": {
+      "definition": "Eligible gross invoiced sales tied to a known CustomerID.",
+      "share_of_eligible_gross_invoiced_sales_percent": 83.5
+    }
+  },
+  "limitations": [
+    "Results are descriptive portfolio analysis, not employer outcomes or forecasts.",
+    "Gross invoiced sales are not net revenue or profit and do not include cost or returns reconciliation.",
+    "Missing customer IDs may bias customer-level profiles."
+  ]
+}
