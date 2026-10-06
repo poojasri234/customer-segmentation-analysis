@@ -1,0 +1,138 @@
+{
+  "project": "Customer Value & Repeat Buying Analysis",
+  "source": "UCI Online Retail; UK-based retailer; GBP",
+  "kpis": {
+    "known_customers": 4338,
+    "repeat_buyers": 2845,
+    "repeat_buyer_share_percent": 65.58,
+    "known_customer_sales_coverage_percent": 83.51
+  },
+  "frequency_distribution": [
+    {
+      "frequency_band": "1 invoice",
+      "customers": 1493,
+      "gross_invoiced_sales_gbp": 613989.56
+    },
+    {
+      "frequency_band": "2–3 invoices",
+      "customers": 1343,
+      "gross_invoiced_sales_gbp": 1386584.39
+    },
+    {
+      "frequency_band": "4–5 invoices",
+      "customers": 630,
+      "gross_invoiced_sales_gbp": 992640.93
+    },
+    {
+      "frequency_band": "6+ invoices",
+      "customers": 872,
+      "gross_invoiced_sales_gbp": 5893994.01
+    }
+  ],
+  "customer_value_concentration": [
+    {
+      "top_customer_share_percent": 5,
+      "customer_count": 217,
+      "share_of_known_customer_gross_invoiced_sales_percent": 50.46
+    },
+    {
+      "top_customer_share_percent": 10,
+      "customer_count": 434,
+      "share_of_known_customer_gross_invoiced_sales_percent": 61.45
+    },
+    {
+      "top_customer_share_percent": 15,
+      "customer_count": 651,
+      "share_of_known_customer_gross_invoiced_sales_percent": 68.99
+    },
+    {
+      "top_customer_share_percent": 20,
+      "customer_count": 868,
+      "share_of_known_customer_gross_invoiced_sales_percent": 74.68
+    },
+    {
+      "top_customer_share_percent": 25,
+      "customer_count": 1085,
+      "share_of_known_customer_gross_invoiced_sales_percent": 79.19
+    },
+    {
+      "top_customer_share_percent": 30,
+      "customer_count": 1302,
+      "share_of_known_customer_gross_invoiced_sales_percent": 82.84
+    },
+    {
+      "top_customer_share_percent": 35,
+      "customer_count": 1519,
+      "share_of_known_customer_gross_invoiced_sales_percent": 85.85
+    },
+    {
+      "top_customer_share_percent": 40,
+      "customer_count": 1736,
+      "share_of_known_customer_gross_invoiced_sales_percent": 88.35
+    },
+    {
+      "top_customer_share_percent": 45,
+      "customer_count": 1953,
+      "share_of_known_customer_gross_invoiced_sales_percent": 90.44
+    },
+    {
+      "top_customer_share_percent": 50,
+      "customer_count": 2169,
+      "share_of_known_customer_gross_invoiced_sales_percent": 92.19
+    },
+    {
+      "top_customer_share_percent": 55,
+      "customer_count": 2386,
+      "share_of_known_customer_gross_invoiced_sales_percent": 93.72
+    },
+    {
+      "top_customer_share_percent": 60,
+      "customer_count": 2603,
+      "share_of_known_customer_gross_invoiced_sales_percent": 95.02
+    },
+    {
+      "top_customer_share_percent": 65,
+      "customer_count": 2820,
+      "share_of_known_customer_gross_invoiced_sales_percent": 96.11
+    },
+    {
+      "top_customer_share_percent": 70,
+      "customer_count": 3037,
+      "share_of_known_customer_gross_invoiced_sales_percent": 97.04
+    },
+    {
+      "top_customer_share_percent": 75,
+      "customer_count": 3254,
+      "share_of_known_customer_gross_invoiced_sales_percent": 97.83
+    },
+    {
+      "top_customer_share_percent": 80,
+      "customer_count": 3471,
+      "share_of_known_customer_gross_invoiced_sales_percent": 98.51
+    },
+    {
+      "top_customer_share_percent": 85,
+      "customer_count": 3688,
+      "share_of_known_customer_gross_invoiced_sales_percent": 99.06
+    },
+    {
+      "top_customer_share_percent": 90,
+      "customer_count": 3905,
+      "share_of_known_customer_gross_invoiced_sales_percent": 99.49
+    },
+    {
+      "top_customer_share_percent": 95,
+      "customer_count": 4122,
+      "share_of_known_customer_gross_invoiced_sales_percent": 99.81
+    },
+    {
+      "top_customer_share_percent": 100,
+      "customer_count": 4338,
+      "share_of_known_customer_gross_invoiced_sales_percent": 100.0
+    }
+  ],
+  "notes": [
+    "Customer profiles include eligible invoice lines with a known CustomerID only.",
+    "Gross invoiced sales is not net revenue or profit; no customer identifiers are exported."
+  ]
+}

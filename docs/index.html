@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive data-analysis dashboard for Customer Value &amp; Repeat Buying Analysis.">
+  <title>Customer Value &amp; Repeat Buying Analysis | Poojasri Medikonda</title>
+  <style>
+    :root {
+      --ink: #162033; --muted: #5c687a; --line: #dfe5ec; --panel: #ffffff;
+      --surface: #f6f8fb; --navy: #253858; --blue: #2769c7; --blue-soft: #e9f1fd;
+      --teal: #0f766e; --warning: #8a5b06; --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--surface); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.5; }
+    a { color: inherit; }
+    .shell { max-width: 1180px; margin: 0 auto; padding: 28px 22px 52px; }
+    .topbar { display: flex; justify-content: space-between; gap: 16px; align-items: center; margin-bottom: 28px; }
+    .brand { font-size: .9rem; color: var(--muted); font-weight: 700; letter-spacing: .02em; }
+    .repo-link { display: inline-flex; align-items: center; gap: 8px; padding: 9px 13px; border: 1px solid var(--line); border-radius: 9px; background: white; color: var(--navy); text-decoration: none; font-size: .9rem; font-weight: 700; }
+    .repo-link:hover { border-color: var(--blue); color: var(--blue); }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(250px, .8fr); gap: 22px; align-items: stretch; margin-bottom: 22px; }
+    .intro, .primary, .panel, .metric { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
+    .intro { padding: 32px; }
+    .eyebrow { text-transform: uppercase; letter-spacing: .1em; color: var(--blue); font-size: .73rem; font-weight: 800; margin: 0 0 10px; }
+    h1 { font-size: clamp(1.9rem, 4vw, 2.8rem); letter-spacing: -.035em; margin: 0 0 13px; line-height: 1.12; }
+    .subtitle { color: var(--muted); margin: 0; max-width: 700px; font-size: 1.02rem; }
+    .source { margin: 20px 0 0; padding-top: 18px; border-top: 1px solid var(--line); font-size: .88rem; color: var(--muted); }
+    .source strong { color: var(--ink); }
+    .primary { padding: 28px; display: flex; flex-direction: column; justify-content: center; background: #f8fbff; }
+    .metric-label { color: var(--muted); font-size: .86rem; font-weight: 700; }
+    .primary-value { font-size: clamp(2.5rem, 5vw, 3.5rem); line-height: 1; letter-spacing: -.055em; font-weight: 800; color: var(--navy); margin: 12px 0; }
+    .metric-detail { color: var(--muted); font-size: .88rem; margin: 0; }
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
+    .metric { padding: 18px; min-height: 142px; display: flex; flex-direction: column; justify-content: space-between; }
+    .metric .value { color: var(--navy); font-size: 1.65rem; font-weight: 800; letter-spacing: -.035em; margin: 12px 0 5px; }
+    .dashboard { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(270px, .7fr); gap: 22px; align-items: start; }
+    .panel { padding: 26px; }
+    .panel h2 { margin: 0; letter-spacing: -.02em; font-size: 1.22rem; }
+    .panel p { color: var(--muted); }
+    .controls { display: flex; gap: 8px; flex-wrap: wrap; margin: 19px 0 13px; }
+    button { appearance: none; border: 1px solid var(--line); background: #fff; color: var(--muted); border-radius: 8px; padding: 8px 11px; font: inherit; font-size: .86rem; font-weight: 750; cursor: pointer; }
+    button:hover { border-color: var(--blue); color: var(--blue); }
+    button[aria-pressed="true"] { background: var(--blue); border-color: var(--blue); color: white; }
+    .chart-wrap { position: relative; min-height: 336px; border-top: 1px solid var(--line); padding-top: 17px; }
+    #chart { display: block; width: 100%; height: 310px; overflow: visible; }
+    .tooltip { position: absolute; display: none; z-index: 5; max-width: 225px; padding: 10px 12px; background: #152238; color: white; border-radius: 8px; font-size: .78rem; line-height: 1.4; box-shadow: 0 8px 20px rgba(21,34,56,.18); pointer-events: none; }
+    .chart-help { font-size: .82rem; color: var(--muted); margin: 11px 0 0; }
+    .insights { display: grid; gap: 14px; }
+    .note { border-radius: 11px; padding: 16px; border: 1px solid var(--line); background: #fff; }
+    .note h3 { margin: 0 0 8px; font-size: .9rem; }
+    .note p { font-size: .87rem; margin: 0; }
+    .method { border-left: 3px solid var(--teal); }
+    .caveat { border-left: 3px solid #b7791f; background: #fffdf8; }
+    .footer { margin-top: 23px; color: var(--muted); font-size: .82rem; }
+    @media (max-width: 820px) { .hero, .dashboard { grid-template-columns: 1fr; } .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } .shell { padding: 18px 14px 38px; } .intro, .primary, .panel { padding: 22px; } }
+    @media (max-width: 460px) { .topbar { align-items: flex-start; flex-direction: column; } .metrics { grid-template-columns: 1fr; } .metric { min-height: 118px; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="topbar">
+      <div class="brand">POOJASRI MEDIKONDA · DATA ANALYST</div>
+      <a class="repo-link" id="repo-link" href="#">View repository ↗</a>
+    </div>
+    <section class="hero" aria-labelledby="project-title">
+      <article class="intro">
+        <p class="eyebrow" id="eyebrow"></p>
+        <h1 id="project-title"></h1>
+        <p class="subtitle" id="subtitle"></p>
+        <p class="source"><strong>Dataset:</strong> <span id="source"></span></p>
+      </article>
+      <aside class="primary" aria-label="Headline metric">
+        <span class="metric-label" id="primary-label"></span>
+        <strong class="primary-value" id="primary-value"></strong>
+        <p class="metric-detail" id="primary-note"></p>
+      </aside>
+    </section>
+    <section class="metrics" id="metrics" aria-label="Project metrics"></section>
+    <nav class="artifacts" aria-label="Project files">
+      <a class="artifact-link" id="data-link" href="#">Data & outputs ↗</a>
+      <a class="artifact-link" id="sql-link" href="#">SQL queries ↗</a>
+      <a class="artifact-link" id="powerbi-link" href="#">Power BI materials ↗</a>
+      <a class="artifact-link" id="code-link" href="#">Python analysis ↗</a>
+    </nav>
+    <section class="dashboard">
+      <article class="panel">
+        <h2 id="chart-title"></h2>
+        <div class="controls" id="controls" aria-label="Chart view selector"></div>
+        <div class="chart-wrap">
+          <div class="tooltip" id="tooltip" role="status" aria-live="polite"></div>
+          <svg id="chart" role="img" aria-labelledby="chart-title chart-description"></svg>
+        </div>
+        <p class="chart-help" id="chart-description"></p>
+      </article>
+      <aside class="insights">
+        <article class="note method"><h3>Method</h3><p id="method"></p></article>
+        <article class="note caveat"><h3>Interpretation</h3><p id="caveat"></p></article>
+      </aside>
+    </section>
+    <p class="footer">Interactive portfolio dashboard built with plain HTML, CSS, and SVG—no external libraries or customer-level data.</p>
+  </main>
+  <script>
+    const project = {"title": "Customer Value & Repeat Buying Analysis", "eyebrow": "Interactive project dashboard", "subtitle": "A customer-value view built from the public UCI Online Retail dataset.", "source": "UCI Online Retail · UK-based online retailer · 4,338 known customers", "primaryLabel": "Repeat buyers", "primaryValue": "65.6%", "primaryNote": "Known customers with at least two eligible invoices", "metrics": [{"label": "Known customers", "value": "4,338", "detail": "Eligible records with CustomerID"}, {"label": "Repeat buyers", "value": "65.6%", "detail": "At least two invoices"}, {"label": "Top 20% contribution", "value": "74.7%", "detail": "Of known-customer gross invoiced sales"}, {"label": "Customer-ID coverage", "value": "83.5%", "detail": "Of eligible gross invoiced sales"}], "views": [{"id": "repeat", "button": "Repeat buying", "title": "Repeat-buyer share among known customers", "note": "Repeat buying is defined as at least two distinct eligible invoices during the observed period.", "unit": "%", "values": [{"label": "Repeat buyers", "value": 65.6, "detail": "At least two invoices"}, {"label": "One-time buyers", "value": 34.4, "detail": "One eligible invoice"}]}, {"id": "concentration", "button": "Value concentration", "title": "Known-customer gross invoiced sales concentration", "note": "The top 20% of 4,338 known customers equals 868 customers ranked by observed gross invoiced sales.", "unit": "%", "values": [{"label": "Top 20% customers", "value": 74.7, "detail": "Share of known-customer gross invoiced sales"}, {"label": "Remaining 80%", "value": 25.3, "detail": "Remaining share"}]}, {"id": "coverage", "button": "ID coverage", "title": "Eligible gross invoiced sales tied to a CustomerID", "note": "Customer-level profiling only uses known customer IDs; the coverage metric makes that scope visible.", "unit": "%", "values": [{"label": "Known CustomerID", "value": 83.5, "detail": "Eligible gross invoiced sales"}, {"label": "No CustomerID", "value": 16.5, "detail": "Remaining eligible sales share"}]}], "method": "Removed extra exact duplicate copies, retained positive non-cancelled sales lines, and built RFM-style recency, frequency, and monetary features for known customers. The project exports aggregate results only.", "caveat": "These are descriptive portfolio findings from one historical UK retailer. Gross invoiced sales is not net revenue or profit, and missing customer IDs can affect customer-level profiles.", "codeDir": "src",
+        "repoUrl": "https://github.com/poojasri234/customer-segmentation-analysis"};
+    const fmt = new Intl.NumberFormat('en-GB');
+    const esc = (text) => String(text).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    const byId = (id) => document.getElementById(id);
+    function fillStatic() {
+      byId('eyebrow').textContent = project.eyebrow;
+      byId('project-title').textContent = project.title;
+      byId('subtitle').textContent = project.subtitle;
+      byId('source').textContent = project.source;
+      byId('primary-label').textContent = project.primaryLabel;
+      byId('primary-value').textContent = project.primaryValue;
+      byId('primary-note').textContent = project.primaryNote;
+      byId('method').textContent = project.method;
+      byId('caveat').textContent = project.caveat;
+      const link = byId('repo-link'); link.href = project.repoUrl;
+      byId('data-link').href = project.repoUrl + '/tree/main/data';
+      byId('sql-link').href = project.repoUrl + '/tree/main/sql';
+      byId('powerbi-link').href = project.repoUrl + '/tree/main/powerbi';
+      byId('code-link').href = project.repoUrl + '/tree/main/' + project.codeDir;
+      byId('metrics').innerHTML = project.metrics.map(m => `<article class="metric"><span class="metric-label">${esc(m.label)}</span><strong class="value">${esc(m.value)}</strong><span class="metric-detail">${esc(m.detail)}</span></article>`).join('');
+    }
+    function chartValue(v, unit) {
+      return unit === '%' ? `${v.toFixed(v % 1 ? 2 : 0)}%` : fmt.format(v);
+    }
+    function render(viewIndex) {
+      const view = project.views[viewIndex];
+      byId('chart-title').textContent = view.title;
+      byId('chart-description').textContent = view.note + ' Hover over a bar for its detail.';
+      byId('controls').innerHTML = project.views.map((v, i) => `<button type="button" aria-pressed="${i === viewIndex}" data-index="${i}">${esc(v.button)}</button>`).join('');
+      byId('controls').querySelectorAll('button').forEach(button => button.addEventListener('click', () => render(Number(button.dataset.index))));
+      const svg = byId('chart');
+      const width = 720, height = 310, top = 24, bottom = 74, left = 50, right = 16;
+      const plotH = height - top - bottom, plotW = width - left - right;
+      const max = Math.max(...view.values.map(d => d.value));
+      const scaleMax = view.unit === '%' ? 100 : max * 1.12;
+      const band = plotW / view.values.length;
+      let markup = `<title>${esc(view.title)}</title><desc>${esc(view.note)}</desc>`;
+      [0, .25, .5, .75, 1].forEach(p => {
+        const y = top + plotH - plotH * p;
+        const val = scaleMax * p;
+        markup += `<line x1="${left}" y1="${y}" x2="${width-right}" y2="${y}" stroke="#e7ebf0" stroke-width="1"/>`;
+        markup += `<text x="${left-9}" y="${y+4}" text-anchor="end" fill="#7a8797" font-size="11">${esc(chartValue(val, view.unit))}</text>`;
+      });
+      view.values.forEach((d, i) => {
+        const x = left + band * i + band * .18;
+        const barW = Math.min(92, band * .64);
+        const h = Math.max(4, (d.value / scaleMax) * plotH);
+        const y = top + plotH - h;
+        const label = d.label.length > 19 ? d.label.replace(/ /g, '\n') : d.label;
+        markup += `<g class="bar-group" tabindex="0" role="graphics-symbol" aria-label="${esc(d.label)}: ${esc(chartValue(d.value, view.unit))}. ${esc(d.detail)}" data-label="${esc(d.label)}" data-value="${esc(chartValue(d.value, view.unit))}" data-detail="${esc(d.detail)}"><rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="5" fill="#2769c7" opacity=".94"></rect><text x="${x+barW/2}" y="${y-9}" text-anchor="middle" fill="#1b3153" font-size="12" font-weight="700">${esc(chartValue(d.value, view.unit))}</text><text x="${x+barW/2}" y="${height-43}" text-anchor="middle" fill="#536174" font-size="11">${label.split('\n').map((t,j)=>`<tspan x="${x+barW/2}" dy="${j?13:0}">${esc(t)}</tspan>`).join('')}</text></g>`;
+      });
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      svg.innerHTML = markup;
+      const tooltip = byId('tooltip');
+      svg.querySelectorAll('.bar-group').forEach(group => {
+        const show = (event) => { const r = svg.getBoundingClientRect(); const x = event.clientX ? event.clientX - r.left : r.width / 2; tooltip.innerHTML = `<strong>${group.dataset.label}</strong><br>${group.dataset.value}<br><span>${group.dataset.detail}</span>`; tooltip.style.display = 'block'; tooltip.style.left = `${Math.min(x + 12, r.width - 230)}px`; tooltip.style.top = '14px'; };
+        group.addEventListener('pointerenter', show); group.addEventListener('pointermove', show); group.addEventListener('focus', show);
+        group.addEventListener('pointerleave', () => tooltip.style.display = 'none'); group.addEventListener('blur', () => tooltip.style.display = 'none');
+      });
+    }
+    fillStatic(); render(0);
+  </script>
+</body>
+</html>
