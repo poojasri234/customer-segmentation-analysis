@@ -1,32 +1,64 @@
 # Customer Value & Repeat Buying Analysis
 
-A reproducible customer analytics project using the public [UCI Online Retail dataset](https://doi.org/10.24432/C5BW33), which contains transactions from a UK-based online retailer between December 2010 and December 2011. It uses GBP because the source data is from a UK retailer.
+[Open the live dashboard](https://poojasri234.github.io/customer-segmentation-analysis/)
+
+**Tools:** Python/pandas · SQL/SQLite · Excel source-data handling · RFM-style customer analytics · interactive HTML dashboard · Power BI report specification and DAX measures
+
+A reproducible customer analytics case study using the public [UCI Online Retail dataset](https://doi.org/10.24432/C5BW33), representing one UK retailer from December 2010 to December 2011. Values are in GBP (£).
 
 ## Business question
 
-How much repeat buying is visible among identified customers, how concentrated is their observed spending, and how much eligible sales value can be tied to a customer ID?
+How much repeat buying is visible among identified customers, how concentrated is observed gross invoiced sales, and how much eligible sales value can be connected to a customer ID?
 
-## Results
+## Approach
 
-| Measure | Result | Definition |
-| --- | ---: | --- |
-| Known customers | 4,338 | Customers with an ID and at least one eligible invoice |
-| Repeat buyers | 65.6% | Known customers with at least two distinct eligible invoices |
-| Top-customer value concentration | 74.7% | Share of known-customer gross invoiced sales from the top 20% (868) customers by observed spend |
-| Customer-ID coverage | 83.5% | Share of eligible gross invoiced sales attached to a known customer ID |
+1. Validated the source workbook and removed extra exact full-row copies, retaining the first occurrence.
+2. Kept non-cancelled invoice lines with positive quantity and unit price; `gross invoiced sales = Quantity × UnitPrice`.
+3. Used eligible lines with a known `CustomerID` for customer profiling while retaining all eligible lines in the CustomerID-coverage denominator.
+4. Calculated RFM-style recency, distinct-invoice frequency, and gross invoiced sales.
+5. Reproduced repeat-buyer, value-concentration, and validation results with [SQLite queries](sql/customer_value_analysis.sql).
 
-These are descriptive results from a public historical dataset. They are not employer results, customer forecasts, or evidence that any intervention caused a change.
+## Findings
 
-## Method
+- **4,338** identified customers remained after the documented rules; **2,845 (65.58%)** made at least two distinct eligible purchases.
+- The top **20%** of identified customers (**868**) generated **74.68%** of known-customer gross invoiced sales. This is historical value concentration, not an individual targeting list.
+- **83.51%** of eligible gross invoiced sales could be tied to a CustomerID. The remaining **16.49%** is an identity and measurement gap that limits repeat-behaviour analysis.
+- The **872 customers with 6+ eligible invoices** represented **£5.89M** or **66.32%** of known-customer gross-invoice value. The **1,493 one-invoice customers** are the clearest future repeat-purchase test population.
 
-1. Read the source workbook and remove extra exact duplicate copies, retaining the first full-row occurrence.
-2. Keep non-cancelled invoice lines with positive quantity and positive unit price. Gross invoiced sales are `Quantity × UnitPrice`.
-3. Exclude rows without a `CustomerID` from customer-level profiling, while retaining them when calculating overall eligible sales for the coverage denominator.
-4. Build RFM-style customer features in memory:
-   - **Recency:** days between a customer's last purchase and the day after the dataset's final transaction;
-   - **Frequency:** distinct eligible invoices per customer;
-   - **Monetary:** eligible gross invoiced sales per customer.
-5. Rank known customers by observed monetary value and calculate the top 20% contribution. The script writes aggregate results only.
+## Recommendation
+
+First diagnose why eligible invoices lack a CustomerID, then test a privacy-appropriate account or loyalty-capture flow at checkout. This improves measurement before attempting customer-level retention or cross-sell work.
+
+In parallel, run a randomized post-first-purchase journey for a selected group of one-invoice customers and compare future repeat purchase, gross invoiced sales, return rate, and incremental cost with a holdout.
+
+## Potential business value — illustrative only
+
+A **five-percentage-point increase in CustomerID coverage** would make roughly **£0.53M** more of a comparable **£10.64M eligible gross-invoice base** traceable to a customer. That is better measurement, **not £0.53M of new sales**.
+
+Likewise, a five-point incremental repeat rate among a comparable group of **1,493** one-invoice customers is about **75 additional repeat customers**. The data cannot estimate their future order value, margin, or profit.
+
+## Limitations
+
+- This is one historical public retailer dataset, not employer data or a forecast.
+- Gross invoiced sales is not net revenue, margin, or profit; cancellation and non-positive lines are excluded rather than reconciled into net sales.
+- Missing CustomerID values can bias customer-level profiles.
+- Historical concentration does not prove that a campaign or intervention will change behaviour.
+- Customer identifiers and transaction rows are deliberately not published in this repository.
+
+## SQL and dashboard evidence
+
+- [`sql/customer_value_analysis.sql`](sql/customer_value_analysis.sql) — eligibility, RFM-style profiling, repeat distribution, concentration, and validation queries.
+- [`src/customer_value_analysis.py`](src/customer_value_analysis.py) — reproducible aggregate analysis.
+- [`powerbi/`](powerbi/) — DAX measures and report specification. A completed `.pbix` file is not included.
+- [`data/customer_value_summary.json`](data/customer_value_summary.json) — aggregate-only output.
+
+## 3-minute interview walkthrough
+
+- **0:00–0:25:** Frame the decision as repeat purchasing, value concentration, and data traceability — not a recommendation engine.
+- **0:25–1:10:** Explain exact-dedupe, cancellation/positive-value rules, CustomerID scope, and gross-invoice definition.
+- **1:10–1:50:** State 4,338 identified customers, 65.58% repeat buyers, top 20% contributing 74.68%, and 83.51% CustomerID coverage.
+- **1:50–2:25:** Show the SQL validation path and explain that top-20% is an aggregate concentration measure, not a personal-data target list.
+- **2:25–3:00:** Recommend identity capture plus a randomized first-purchase test. With business data, add returns, margin, product availability, consent, and campaign exposure.
 
 ## Reproduce
 
@@ -37,25 +69,4 @@ pip install -r requirements.txt
 python src/customer_value_analysis.py --download
 ```
 
-Or download `Online Retail.xlsx` from the UCI source, save it as `data/Online Retail.xlsx`, then run:
-
-```bash
-python src/customer_value_analysis.py --input "data/Online Retail.xlsx"
-```
-
-The output is written to [`data/customer_value_summary.json`](data/customer_value_summary.json). The raw workbook is deliberately excluded from the repository; see [`data/README.md`](data/README.md).
-
-## Validation
-
-The script checks the expected source schema and verifies that the output metrics reproduce the published results within a small rounding tolerance. No customer-level records or identifiers are exported.
-
-## Tools
-
-Python, pandas, openpyxl
-
-## Source and limitations
-
-- Source: [UCI Machine Learning Repository — Online Retail](https://doi.org/10.24432/C5BW33), Daqing Chen (2015), CC BY 4.0.
-- The source represents one UK retailer and a limited historical period.
-- “Gross invoiced sales” is not net revenue or profit: it excludes cancellation/non-positive lines under the stated rule and does not include costs or a returns reconciliation.
-- Missing customer IDs can affect customer-level profiles. The customer results apply only to identified customers in this dataset.
+The raw source workbook is not committed. See [data/README.md](data/README.md) for source and placement instructions.
