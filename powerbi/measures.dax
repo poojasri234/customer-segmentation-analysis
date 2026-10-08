@@ -1,0 +1,88 @@
+// Create these disconnected calculated tables first.
+Top Customer Share = GENERATESERIES(5, 100, 5)
+
+Customer Share Bands = GENERATESERIES(5, 100, 5)
+
+// Create these calculated columns on CustomerProfile if Power Query
+// has not already created them. Sort Frequency Band by Frequency Band Sort.
+Frequency Band =
+SWITCH(
+    TRUE(),
+    CustomerProfile[FrequencyInvoices] = 1, "1 invoice",
+    CustomerProfile[FrequencyInvoices] <= 3, "2–3 invoices",
+    CustomerProfile[FrequencyInvoices] <= 5, "4–5 invoices",
+    "6+ invoices"
+)
+
+Frequency Band Sort =
+SWITCH(
+    CustomerProfile[Frequency Band],
+    "1 invoice", 1,
+    "2–3 invoices", 2,
+    "4–5 invoices", 3,
+    4
+)
+
+// Core measures
+Eligible Gross Invoiced Sales GBP =
+SUM(EligibleSales[GrossInvoicedSalesGBP])
+
+Known Customer Gross Invoiced Sales GBP =
+SUM(KnownCustomerSales[GrossInvoicedSalesGBP])
+
+Known Customers =
+COUNTROWS(CustomerProfile)
+
+Repeat Buyers =
+COUNTROWS(
+    FILTER(CustomerProfile, CustomerProfile[FrequencyInvoices] >= 2)
+)
+
+Repeat Buyer Share % =
+DIVIDE([Repeat Buyers], [Known Customers])
+
+Known Customer Sales Coverage % =
+DIVIDE([Known Customer Gross Invoiced Sales GBP], [Eligible Gross Invoiced Sales GBP])
+
+Top Customer Share Selected % =
+SELECTEDVALUE('Top Customer Share'[Value], 20)
+
+Top Customer Count Selected =
+CEILING(DIVIDE([Known Customers] * [Top Customer Share Selected %], 100), 1)
+
+Top Customer Gross Invoiced Sales GBP =
+VAR CustomerCount = [Top Customer Count Selected]
+VAR TopCustomers =
+    TOPN(
+        CustomerCount,
+        ALLSELECTED(CustomerProfile),
+        CustomerProfile[MonetaryGBP], DESC,
+        CustomerProfile[CustomerID], ASC
+    )
+RETURN
+    SUMX(TopCustomers, CustomerProfile[MonetaryGBP])
+
+Top Customer Contribution % =
+DIVIDE([Top Customer Gross Invoiced Sales GBP], [Known Customer Gross Invoiced Sales GBP])
+
+Customer Value Contribution % =
+VAR Share = SELECTEDVALUE('Customer Share Bands'[Value])
+VAR CustomerCount = CEILING(DIVIDE([Known Customers] * Share, 100), 1)
+VAR TopCustomers =
+    TOPN(
+        CustomerCount,
+        ALLSELECTED(CustomerProfile),
+        CustomerProfile[MonetaryGBP], DESC,
+        CustomerProfile[CustomerID], ASC
+    )
+RETURN
+    DIVIDE(SUMX(TopCustomers, CustomerProfile[MonetaryGBP]), [Known Customer Gross Invoiced Sales GBP])
+
+Customers in Frequency Band =
+COUNTROWS(CustomerProfile)
+
+Gross Invoiced Sales in Frequency Band GBP =
+SUM(CustomerProfile[MonetaryGBP])
+
+Method & Scope Note =
+"Customer metrics cover eligible transactions with a known CustomerID. Gross invoiced sales is not net revenue or profit."
